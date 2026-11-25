@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { randomAvatar } from '../lib/avatars'
 
 export default function JoinPage() {
   const [username, setUsername] = useState('')
@@ -21,7 +22,7 @@ export default function JoinPage() {
 
     const { data, error: dbError } = await supabase
       .from('players' as never)
-      .insert({ username: trimmed } as never)
+      .insert({ username: trimmed, avatar: randomAvatar() } as never)
       .select('id')
       .single() as { data: { id: string } | null; error: unknown }
 
