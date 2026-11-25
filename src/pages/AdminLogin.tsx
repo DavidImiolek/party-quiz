@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD as string
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'partyquiz2024'
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('')

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import JoinPage from './pages/JoinPage'
 import AdminLogin from './pages/AdminLogin'
 import LobbyPage from './pages/LobbyPage'
@@ -13,7 +13,7 @@ function Placeholder({ name }: { name: string }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="min-h-svh bg-slate-900 text-white">
         <Routes>
           {/* Player */}
@@ -26,6 +26,6 @@ export default function App() {
           <Route path="/host/game/:gameId" element={<Placeholder name="Host Control" />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
