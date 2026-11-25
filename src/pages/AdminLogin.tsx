@@ -1,16 +1,24 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'partyquiz2024'
+// SHA-256 hash of the admin password — safe to expose in public repo
+const ADMIN_HASH = '97ace6c5998e5a7a4537d31486d84838a24db0e315c92870bd37d72e9c7847ce'
+
+async function sha256(text: string): Promise<string> {
+  const data = new TextEncoder().encode(text)
+  const hash = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('')
+}
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
+    const hash = await sha256(password)
+    if (hash === ADMIN_HASH) {
       localStorage.setItem('isAdmin', 'true')
       navigate('/host/create')
     } else {
