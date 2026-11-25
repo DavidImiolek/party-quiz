@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { randomAvatar } from '../lib/avatars'
+import { pickUniqueAvatar } from '../lib/avatars'
 
 export default function JoinPage() {
   const [username, setUsername] = useState('')
@@ -20,9 +20,17 @@ export default function JoinPage() {
     setLoading(true)
     setError('')
 
+    // Bereits vergebene Avatare laden
+    const { data: existing } = await supabase
+      .from('players' as never)
+      .select('avatar') as { data: { avatar: string }[] | null; error: unknown }
+
+    const takenAvatars = (existing ?? []).map((p) => p.avatar)
+    const avatar = pickUniqueAvatar(takenAvatars)
+
     const { data, error: dbError } = await supabase
       .from('players' as never)
-      .insert({ username: trimmed, avatar: randomAvatar() } as never)
+      .insert({ username: trimmed, avatar } as never)
       .select('id')
       .single() as { data: { id: string } | null; error: unknown }
 
@@ -34,7 +42,6 @@ export default function JoinPage() {
       return
     }
 
-    // Player-ID im localStorage speichern
     localStorage.setItem('playerId', data.id)
     localStorage.setItem('playerName', trimmed)
     navigate('/lobby')
