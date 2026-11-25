@@ -6,9 +6,9 @@ type Player = { id: string; username: string; avatar: string }
 export default function LobbyPage() {
   const [players, setPlayers] = useState<Player[]>([])
   const playerName = localStorage.getItem('playerName')
+  const isAdmin = localStorage.getItem('isAdmin') === 'true'
 
   useEffect(() => {
-    // Load existing players
     supabase
       .from('players' as never)
       .select('id, username, avatar')
@@ -16,7 +16,6 @@ export default function LobbyPage() {
         if (data) setPlayers(data as unknown as Player[])
       })
 
-    // Subscribe to new players
     const channel = supabase
       .channel('lobby')
       .on(
@@ -37,11 +36,20 @@ export default function LobbyPage() {
     }
   }, [])
 
+  function handleStartGame() {
+    // TODO: Spiel-Logik kommt als nächstes
+    alert('Spiel wird gestartet!')
+  }
+
   return (
     <div className="flex flex-col items-center min-h-svh p-8">
       <h1 className="text-3xl font-bold mt-12 mb-2">🎉 Party Quiz</h1>
       <p className="text-slate-400 mb-8">
-        {playerName ? `Du bist drin als ${playerName}` : 'Lobby'} — Warte auf den Host…
+        {isAdmin
+          ? `Host-Modus — ${players.length} Spieler in der Lobby`
+          : playerName
+            ? `Du bist drin als ${playerName} — Warte auf den Host…`
+            : 'Lobby — Warte auf den Host…'}
       </p>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 w-full max-w-lg">
@@ -64,6 +72,16 @@ export default function LobbyPage() {
 
       {players.length === 0 && (
         <p className="text-slate-500 mt-8">Noch keine Spieler…</p>
+      )}
+
+      {isAdmin && (
+        <button
+          onClick={handleStartGame}
+          disabled={players.length === 0}
+          className="mt-10 px-8 py-4 rounded-xl bg-green-600 font-bold text-lg hover:bg-green-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        >
+          🚀 Spiel starten
+        </button>
       )}
 
       <p className="text-slate-600 text-sm mt-8">

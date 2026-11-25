@@ -20,7 +20,7 @@ export default function AdminLogin() {
     const hash = await sha256(password)
     if (hash === ADMIN_HASH) {
       localStorage.setItem('isAdmin', 'true')
-      navigate('/host/create')
+      navigate('/lobby')
     } else {
       setError('Falsches Passwort')
     }
