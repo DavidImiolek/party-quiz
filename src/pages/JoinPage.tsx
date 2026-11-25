@@ -20,10 +20,10 @@ export default function JoinPage() {
     setError('')
 
     const { data, error: dbError } = await supabase
-      .from('players')
-      .insert({ username: trimmed })
+      .from('players' as never)
+      .insert({ username: trimmed } as never)
       .select('id')
-      .single()
+      .single() as { data: { id: string } | null; error: unknown }
 
     setLoading(false)
 
